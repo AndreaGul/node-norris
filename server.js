@@ -24,7 +24,6 @@ const writeJSONData = (nomeFile, newData) => {
 };
 
 const server = http.createServer(async (req, res) => {
-  const norrisDb = readJSONData('norrisDb');
   switch (req.url) {
     case '/favicon.ico':
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
@@ -38,6 +37,10 @@ const server = http.createServer(async (req, res) => {
         .then((jokes) => {
           return jokes.value;
         });
+      const norrisDb = readJSONData('norrisDb');
+      norrisDb.push({ joke });
+      writeJSONData('norrisDb', norrisDb);
+
       res.end(joke);
       break;
     default:

@@ -23,6 +23,30 @@ const writeJSONData = (nomeFile, newData) => {
   fs.writeFileSync(filePath, fileString);
 };
 
+function controlloPresenza(joke) {
+  const norrisDb = readJSONData('norrisDb');
+  norrisDb.forEach((e) => {
+    if (e === joke) {
+      return false;
+    }
+    return true;
+  });
+}
+
+takejoke = async () => {
+  try {
+    const response = await fetch('https://api.chucknorris.io/jokes/random');
+    const jokes = await response.json();
+    if (controlloPresenza(jokes.value)) {
+      return await takejoke(); // Ritorna il risultato della chiamata ricorsiva
+    }
+    return jokes.value;
+  } catch (error) {
+    console.error('Errore', error);
+    return null;
+  }
+};
+
 const server = http.createServer(async (req, res) => {
   switch (req.url) {
     case '/favicon.ico':
@@ -31,12 +55,9 @@ const server = http.createServer(async (req, res) => {
       break;
     case '/':
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      //test con API
-      joke = await fetch('https://api.chucknorris.io/jokes/random')
-        .then((response) => response.json())
-        .then((jokes) => {
-          return jokes.value;
-        });
+
+      joke = await takejoke();
+
       const norrisDb = readJSONData('norrisDb');
       norrisDb.push({ joke });
       writeJSONData('norrisDb', norrisDb);

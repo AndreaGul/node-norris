@@ -33,11 +33,11 @@ const server = http.createServer((req, res) => {
     case '/':
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       //test con API
-      fetch('https://fakestoreapi.com/users')
+      fetch('https://api.chucknorris.io/jokes/random')
         .then((response) => response.json())
-        .then((users) => {
-          console.log(users);
-          res.end();
+        .then((jokes) => {
+          console.log(jokes);
+          res.end(jokes.value);
         });
       break;
     default:

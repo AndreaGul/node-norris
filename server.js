@@ -23,7 +23,7 @@ const writeJSONData = (nomeFile, newData) => {
   fs.writeFileSync(filePath, fileString);
 };
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const norrisDb = readJSONData('norrisDb');
   switch (req.url) {
     case '/favicon.ico':
@@ -33,12 +33,12 @@ const server = http.createServer((req, res) => {
     case '/':
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       //test con API
-      fetch('https://api.chucknorris.io/jokes/random')
+      joke = await fetch('https://api.chucknorris.io/jokes/random')
         .then((response) => response.json())
         .then((jokes) => {
-          console.log(jokes);
-          res.end(jokes.value);
+          return jokes.value;
         });
+      res.end(joke);
       break;
     default:
       res.end();
